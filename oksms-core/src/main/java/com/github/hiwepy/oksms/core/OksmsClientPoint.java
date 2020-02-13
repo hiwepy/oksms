@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.pf4j.ExtensionPoint;
@@ -15,6 +16,19 @@ import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 
 public abstract class OksmsClientPoint implements OksmsClient, ExtensionPoint {
 
+	/**
+	 * 默认连接超时时间，默认：5000（单位：毫秒）
+	 */
+	private int connectTimeout = 5000;
+	/**
+	 * 默认读取超时时间，默认：3000（单位：毫秒）
+	 */
+    private int readTimeout = 3000;
+	/**
+	 * 请求编码，默认：UTF-8
+	 */
+	private String charset = "UTF-8";
+	
 	/**
 	 * SMS服务商调用地址
 	 */ 
@@ -37,8 +51,10 @@ public abstract class OksmsClientPoint implements OksmsClient, ExtensionPoint {
 	}
 	
 	@Override
-	public void initialize(String pluginId, String extensionId) {
-		
+	public void initialize(Properties properties) {
+		this.connectTimeout = Integer.parseInt(properties.getProperty(HTTP_CONNECTTIMEOUT, "5000"));
+		this.readTimeout = Integer.parseInt(properties.getProperty(HTTP_READTIMEOUT, "3000"));
+		this.charset = properties.getProperty(HTTP_CHARSET, "UTF-8");
 	}
 
 	@Override
@@ -53,11 +69,12 @@ public abstract class OksmsClientPoint implements OksmsClient, ExtensionPoint {
 	
 	protected void onPreHandle(HttpURLConnection conn) throws Exception{
 		
-		conn.setConnectTimeout(5000);
-		conn.setReadTimeout(3000);
+		conn.setConnectTimeout(this.connectTimeout);
+		conn.setReadTimeout(this.readTimeout);
 		conn.setRequestMethod("GET");
 		conn.setDoInput(true);
-		conn.setRequestProperty("Charset", "UTF-8"); // 设置编码
+		conn.setRequestProperty("Charset", this.charset); // 设置编码
+		
 		
 	}
 	
@@ -159,6 +176,30 @@ public abstract class OksmsClientPoint implements OksmsClient, ExtensionPoint {
 
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
+	}
+
+	public int getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public void setConnectTimeout(int connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
+
+	public int getReadTimeout() {
+		return readTimeout;
+	}
+
+	public void setReadTimeout(int readTimeout) {
+		this.readTimeout = readTimeout;
+	}
+
+	public String getCharset() {
+		return charset;
+	}
+
+	public void setCharset(String charset) {
+		this.charset = charset;
 	}
 	
 }

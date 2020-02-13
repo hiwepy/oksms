@@ -1,10 +1,16 @@
 package com.github.hiwepy.oksms.core;
 
+import java.util.Properties;
+
 import com.github.hiwepy.oksms.core.exception.PluginInvokeException;
 import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 
 public interface OksmsClient  {
 
+	public static final String HTTP_CONNECTTIMEOUT = "http.connectTimeout";
+	public static final String HTTP_READTIMEOUT = "http.readTimeout";
+	public static final String HTTP_CHARSET = "http.charset";
+	
 	public static final String SMS_URL_KEY = "sms.url";
 	public static final String SMS_UID_KEY = "sms.uid";
 	public static final String SMS_PWD_KEY = "sms.pwd";
@@ -14,9 +20,10 @@ public interface OksmsClient  {
 	/**
 	 * 插件执行生命周期1: 在业务逻辑方法被调用之前做增强处理
 	 * @param pluginId		: 消息路由指定的插件ID
-	 * @param extensionId	： 消息路由指定的插件中扩展点实现对象ID
+	 * @param extensionId	：消息路由指定的插件中扩展点实现对象ID
+	 * @param properties 	: 配置对象
 	 */
-	void initialize(String pluginId, String extensionId);
+	void initialize(Properties properties);
 	
 	/**
 	 * 插件执行生命周期2: 业务逻辑
