@@ -27,6 +27,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
+import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
+import com.github.hiwepy.oksms.core.provider.def.DefaultSmsPropertiesProvider;
+import com.github.hiwepy.oksms.spring.boot.event.OksmsPushEventListener;
 
 import okhttp3.OkHttpClient;
 
@@ -54,8 +57,25 @@ public class OksmsAutoAutoConfiguration {
 	}
 	
 	@Bean
-	public OksmsTemplate oksmsTemplate(@Autowired(required = false) OkHttpClient okHttpClient, PluginManager pluginManager, OksmsProperties oksmsProperties) {
-		return new OksmsTemplate(okHttpClient, pluginManager, oksmsProperties);
+	@ConditionalOnMissingBean
+	public SmsPropertiesProvider smsPropertiesProvider() {
+		return new DefaultSmsPropertiesProvider();
 	}
+	
+	@Bean
+	public OksmsTemplate oksmsTemplate(
+			@Autowired(required = false) OkHttpClient okHttpClient,
+			SmsPropertiesProvider smsPropertiesProvider,
+			PluginManager pluginManager, 
+			OksmsProperties oksmsProperties) {
+		return new OksmsTemplate(smsPropertiesProvider, okHttpClient, pluginManager, oksmsProperties);
+	}
+	
+	@Bean
+	public OksmsPushEventListener smsPushEventListener(OksmsTemplate oksmsTemplate) {
+		return new OksmsPushEventListener(oksmsTemplate);
+	}
+	
+	
 	
 }

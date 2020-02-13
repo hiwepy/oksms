@@ -30,7 +30,8 @@ import com.github.hiwepy.oksms.core.OksmsClientPoint;
 import com.github.hiwepy.oksms.core.OksmsPayload;
 import com.github.hiwepy.oksms.core.annotation.OksmsExtension;
 import com.github.hiwepy.oksms.core.annotation.Primary;
-import com.github.hiwepy.oksms.core.exception.PluginInvokeException;
+import com.github.hiwepy.oksms.core.exception.OksmsException;
+import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 
 import okhttp3.OkHttpClient;
 
@@ -43,10 +44,12 @@ public class OksmsTemplate implements InitializingBean, DisposableBean {
 	private OksmsProperties oksmsProperties; 
 	private PluginManager pluginManager;
 	private Map<String, OksmsClientPoint> clientMap = new ConcurrentHashMap<>();
+	private SmsPropertiesProvider smsPropertiesProvider;
 	private OksmsClientPoint defaultClient;
 	private OkHttpClient okHttpClient;
 	
-	public OksmsTemplate(OkHttpClient okHttpClient, PluginManager pluginManager, OksmsProperties oksmsProperties) {
+	public OksmsTemplate(SmsPropertiesProvider smsPropertiesProvider, OkHttpClient okHttpClient, PluginManager pluginManager, OksmsProperties oksmsProperties) {
+		this.smsPropertiesProvider = smsPropertiesProvider;
 		this.okHttpClient = okHttpClient;
 		this.pluginManager = pluginManager;
 		this.oksmsProperties = oksmsProperties;
@@ -60,11 +63,28 @@ public class OksmsTemplate implements InitializingBean, DisposableBean {
 		return clientMap.get(name);
 	}
 	
-	public void send(String name, OksmsPayload payload) throws PluginInvokeException {
+	public void send(OksmsPayload payload) throws OksmsException {
+		
+		OksmsClientPoint client = getDefaultClient();
+		
+		Properties properties = getSmsPropertiesProvider().props();
+		properties.setProperty(OksmsClient.HTTP_READTIMEOUT, oksmsProperties.getReadTimeout() + "");
+		properties.setProperty(OksmsClient.HTTP_CONNECTTIMEOUT, oksmsProperties.getConnectTimeout() + "");
+		properties.setProperty(OksmsClient.HTTP_CHARSET, oksmsProperties.getCharset());
+		client.initialize(properties);
+		
+		client.send(payload, (data) -> {
+			
+			return true;
+		});
+		
+	}
+	
+	public void send(String name, OksmsPayload payload) throws OksmsException {
 		
 		OksmsClientPoint client = getClient(name);
 		
-		Properties properties = new Properties();
+		Properties properties = getSmsPropertiesProvider().props();
 		properties.setProperty(OksmsClient.HTTP_READTIMEOUT, oksmsProperties.getReadTimeout() + "");
 		properties.setProperty(OksmsClient.HTTP_CONNECTTIMEOUT, oksmsProperties.getConnectTimeout() + "");
 		properties.setProperty(OksmsClient.HTTP_CHARSET, oksmsProperties.getCharset());
@@ -113,5 +133,8 @@ public class OksmsTemplate implements InitializingBean, DisposableBean {
 		
 	}
 
+	public SmsPropertiesProvider getSmsPropertiesProvider() {
+		return smsPropertiesProvider;
+	}
 	
 }
