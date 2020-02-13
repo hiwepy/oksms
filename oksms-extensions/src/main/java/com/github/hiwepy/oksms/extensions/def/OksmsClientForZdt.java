@@ -4,12 +4,15 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pf4j.Extension;
+
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
 import com.github.hiwepy.oksms.core.OksmsPayload;
 import com.github.hiwepy.oksms.core.annotation.OksmsExtension;
 import com.github.hiwepy.oksms.core.exception.PluginInvokeException;
 import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 
+@Extension
 @OksmsExtension(name = "zdtsms", method = "GET", protocol = "http")
 public class OksmsClientForZdt extends OksmsClientPoint {
 

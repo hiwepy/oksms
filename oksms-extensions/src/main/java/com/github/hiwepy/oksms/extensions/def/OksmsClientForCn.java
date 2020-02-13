@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pf4j.Extension;
+
 import com.alibaba.fastjson.JSONObject;
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
 import com.github.hiwepy.oksms.core.OksmsPayload;
@@ -16,6 +18,7 @@ import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 /**
  * 企业短信通 JAVA HTTP接口 发送短信
  */
+@Extension
 @OksmsExtension(name = "cnsms", method = "GET", protocol = "http")
 public class OksmsClientForCn extends OksmsClientPoint {
 	

@@ -12,10 +12,13 @@ import com.github.hiwepy.oksms.core.annotation.OksmsExtension;
 
 public class OksmsPluginTest {
 
+    private static final String STORAGE_CLASS_NAME = "pf4j.storageClassName";
+    private static final String IGNORE_EXTENSION_POINT = "pf4j.ignoreExtensionPoint";
+    
 	public static void main(String[] args) {
 		
-		System.setProperty("pf4j.mode", RuntimeMode.DEPLOYMENT.toString());
-		System.setProperty("pf4j.pluginsDir", "plugins");
+		//System.setProperty("pf4j.mode", RuntimeMode.DEVELOPMENT.toString());
+		//System.setProperty("pf4j.pluginsDir", "plugins");
 		
 		if(RuntimeMode.DEPLOYMENT.compareTo(RuntimeMode.DEPLOYMENT) == 0) {
 			//System.setProperty("pf4j.pluginsDir", System.getProperty("app.home","e:/root") + "/plugins");
@@ -29,7 +32,7 @@ public class OksmsPluginTest {
 		// PluginManager pluginManager = new SpringPluginManager();
 		// PluginManager pluginManager = new Pf4jJarPluginManager();
 		// PluginManager pluginManager = new Pf4jJarPluginWhitSpringManager();
-
+		
 		/**
 		 * 加载插件到JVM
 		 */
@@ -43,22 +46,23 @@ public class OksmsPluginTest {
 	    List<PluginWrapper> list = pluginManager.getPlugins();
 	    for (PluginWrapper pluginWrapper : list) {
 			System.out.println(pluginWrapper.getPluginId());
+			System.out.println(pluginManager.getExtensionClassNames(pluginWrapper.getPluginId()));
+
+		    List<OksmsClientPoint> extensions = pluginManager.getExtensions(OksmsClientPoint.class, pluginWrapper.getPluginId());
+		    for (OksmsClientPoint point : extensions) {
+		    	
+		    	OksmsExtension m = point.getClass().getAnnotation(OksmsExtension.class);
+		    	System.out.println(m.name());
+		    	
+			}
 		}
 	    
-	    List<OksmsClientPoint> extensions = pluginManager.getExtensions(OksmsClientPoint.class);
-	    for (OksmsClientPoint point : extensions) {
-	    	
-	    	OksmsExtension m = point.getClass().getAnnotation(OksmsExtension.class);
-	    	System.out.println(m.name());
-	    	
-		}
+
 	    
 	    /**
 	     * 调用Plugin实现类的stop()方法
 	     */
 	    pluginManager.stopPlugins();
-	    
-	    System.out.println("=============");
 		
 	}
 	

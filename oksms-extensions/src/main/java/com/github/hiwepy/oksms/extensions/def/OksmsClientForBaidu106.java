@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pf4j.Extension;
+
 import com.alibaba.fastjson.JSONObject;
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
 import com.github.hiwepy.oksms.core.OksmsPayload;
@@ -15,6 +17,7 @@ import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 /**
  *  106短信验证接口（http://apistore.baidu.com/apiworks/servicedetail/1018.html）
  */
+@Extension
 @OksmsExtension(name = "baidu-106", method = "GET", protocol = "http")
 public class OksmsClientForBaidu106 extends OksmsClientPoint {
 	

@@ -363,6 +363,7 @@
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
 		<pf4j.version>3.2.0</pf4j.version>
+		<pf4j-spring.version>0.5.0</pf4j-spring.version>
 		<slf4j.version>1.7.26</slf4j.version>
 	</properties>
 
@@ -432,6 +433,11 @@
 			    <artifactId>pf4j</artifactId>
 		   		<version>${pf4j.version}</version>
 			</dependency>
+			<dependency>
+			    <groupId>org.pf4j</groupId>
+			    <artifactId>pf4j-spring</artifactId>
+			    <version>${pf4j-spring.version}</version>
+			</dependency>   
 			
 		</dependencies>
 	</dependencyManagement>

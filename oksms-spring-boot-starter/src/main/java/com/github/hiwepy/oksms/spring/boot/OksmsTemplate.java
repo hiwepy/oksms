@@ -85,20 +85,18 @@ public class OksmsTemplate implements InitializingBean, DisposableBean {
 	    List<PluginWrapper> list = pluginManager.getPlugins();
 	    for (PluginWrapper pluginWrapper : list) {
 			System.out.println(pluginWrapper.getPluginId());
+			List<OksmsClientPoint> extensions = pluginManager.getExtensions(OksmsClientPoint.class, pluginWrapper.getPluginId());
+			for (OksmsClientPoint client : extensions) {
+		    	
+		    	OksmsExtension m = client.getClass().getAnnotation(OksmsExtension.class);
+		    	clientMap.put(m.name(), client);
+		    	
+		    	if(null != client.getClass().getAnnotation(Primary.class)) {
+		    		defaultClient = client;
+		    	}
+		    	
+			}
 		}
-	    
-	    List<OksmsClientPoint> extensions = pluginManager.getExtensions(OksmsClientPoint.class);
-	    for (OksmsClientPoint client : extensions) {
-	    	
-	    	OksmsExtension m = client.getClass().getAnnotation(OksmsExtension.class);
-	    	clientMap.put(m.name(), client);
-	    	
-	    	if(null != client.getClass().getAnnotation(Primary.class)) {
-	    		defaultClient = client;
-	    	}
-	    	
-		}
-		
 	}
 
 	@Override

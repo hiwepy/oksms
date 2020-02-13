@@ -13,8 +13,8 @@
 	<properties>
 
 		<plugin.id>${project.artifactId}</plugin.id>
-		<plugin.description>消息路由插件实现1</plugin.description>
-		<plugin.class>net.jeebiz.mbus.plugin.demo.MessagePluginImpl</plugin.class>
+		<plugin.description>短信发送插件默认实现</plugin.description>
+		<plugin.class>com.github.hiwepy.oksms.extensions.OksmsPlugin</plugin.class>
 		<plugin.version>${project.version}</plugin.version>
 		<plugin.provider>${project.groupId}</plugin.provider>
 		<plugin.dependencies />
