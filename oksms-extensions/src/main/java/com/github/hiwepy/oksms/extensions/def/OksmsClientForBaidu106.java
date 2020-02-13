@@ -7,23 +7,30 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
+import com.github.hiwepy.oksms.core.OksmsPayload;
 import com.github.hiwepy.oksms.core.annotation.OksmsExtension;
+import com.github.hiwepy.oksms.core.exception.PluginInvokeException;
+import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 
 /**
  *  106短信验证接口（http://apistore.baidu.com/apiworks/servicedetail/1018.html）
  */
 @OksmsExtension(name = "baidu-106", method = "GET", protocol = "http")
-public class Baidu106SmsClient extends OksmsClientPoint {
+public class OksmsClientForBaidu106 extends OksmsClientPoint {
 	
 	/**
 	 * SMS服务商调用地址
 	 */ 
 	protected String DEFAULT_SMSURL = "http://apis.baidu.com/kingtto_media/106sms/106sms";
 	
-	@Override
-	public String name() {
-		return "baidu-106";
+	public OksmsClientForBaidu106(){
+		super();
 	}
+	
+	public OksmsClientForBaidu106(SmsPropertiesProvider propsProvider){
+		super(propsProvider);
+	}
+	
 	
 	@Override
 	protected void onPreHandle(HttpURLConnection conn) throws Exception {
@@ -58,11 +65,11 @@ public class Baidu106SmsClient extends OksmsClientPoint {
 	 *
 	 */
 	@Override
-	public boolean send(String content, String mobile) {
+	public Object send(OksmsPayload payload) throws PluginInvokeException {
 		try {
 			Map<String, String> params = new HashMap<String, String>();
-			params.put("mobile", mobile);
-			params.put("content", URLEncoder.encode(content, "UTF-8"));
+			params.put("mobile", payload.getMobile());
+			params.put("content", URLEncoder.encode(payload.getContent(), "UTF-8"));
 			String result = requestGet(getUrl(), params);
 			if (result != null) {
 				JSONObject jsonObject = JSONObject.parseObject(result);
@@ -84,5 +91,6 @@ public class Baidu106SmsClient extends OksmsClientPoint {
 	public String getSmsURL() {
 		return DEFAULT_SMSURL;
 	}
+
 	
 }

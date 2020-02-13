@@ -36,7 +36,22 @@ public abstract class OksmsClientPoint implements OksmsClient, ExtensionPoint {
 		this.propsProvider = propsProvider;
 	}
 	
-	void onPreHandle(HttpURLConnection conn) throws Exception {
+	@Override
+	public void initialize(String pluginId, String extensionId) {
+		
+	}
+
+	@Override
+	public void afterThrowing(String pluginId, String extensionId, Throwable cause) {
+		
+	}
+
+	@Override
+	public void afterReturning(String pluginId, String extensionId) {
+		
+	}
+	
+	protected void onPreHandle(HttpURLConnection conn) throws Exception{
 		
 		conn.setConnectTimeout(5000);
 		conn.setReadTimeout(3000);
@@ -46,7 +61,7 @@ public abstract class OksmsClientPoint implements OksmsClient, ExtensionPoint {
 		
 	}
 	
-	String requestGet(String httpUrl, Map<String, String> httpArg) {
+	protected String requestGet(String httpUrl, Map<String, String> httpArg) {
 		if (httpUrl == null || "".equals(httpUrl.trim())) {
 			return null;
 		}

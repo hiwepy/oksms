@@ -16,7 +16,7 @@ public interface OksmsClient  {
 	 * @param pluginId		: 消息路由指定的插件ID
 	 * @param extensionId	： 消息路由指定的插件中扩展点实现对象ID
 	 */
-	void before(String pluginId, String extensionId);
+	void initialize(String pluginId, String extensionId);
 	
 	/**
 	 * 插件执行生命周期2: 业务逻辑

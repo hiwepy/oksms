@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
+import com.github.hiwepy.oksms.core.OksmsPayload;
 import com.github.hiwepy.oksms.core.annotation.OksmsExtension;
+import com.github.hiwepy.oksms.core.exception.PluginInvokeException;
 import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 
 @OksmsExtension(name = "zdtsms", method = "GET", protocol = "http")
-public class ZdtSmsClient extends OksmsClientPoint {
+public class OksmsClientForZdt extends OksmsClientPoint {
 
 	public static final String SMS_TOKEN_KEY = "sms.token";
 	public static final String SMS_MSGTYPE_KEY = "sms.msgtype";
@@ -33,28 +35,23 @@ public class ZdtSmsClient extends OksmsClientPoint {
 	 */ 
 	protected String source;
 	
-	public ZdtSmsClient(){
+	public OksmsClientForZdt(){
 		super();
 	}
 	
-	public ZdtSmsClient(SmsPropertiesProvider propsProvider){
+	public OksmsClientForZdt(SmsPropertiesProvider propsProvider){
 		super(propsProvider);
 	}
 	
 	@Override
-	public String name() {
-		return "zdtsms";
-	}
-
-	@Override
-	public boolean send(String content, String mobile) {
+	public Object send(OksmsPayload payload) throws PluginInvokeException {
 		int ret = 99;
 		try {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("username", getUid());
 			params.put("password", getPwd());
-			params.put("to", mobile); // 短信接收号码，多个号码（用英文逗号隔开）视为一次群发操作
-			params.put("text", URLEncoder.encode(content, "GBK"));
+			params.put("to", payload.getMobile()); // 短信接收号码，多个号码（用英文逗号隔开）视为一次群发操作
+			params.put("text", URLEncoder.encode(payload.getContent(), "GBK"));
 			params.put("msgtype", getMsgtype()); // 发送类型 1:普通短信 2:长短信(超过64字符)
 			params.put("source", getSource());
 			String result = requestGet(getUrl(), params);

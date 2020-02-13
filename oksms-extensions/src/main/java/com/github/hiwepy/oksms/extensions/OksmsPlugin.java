@@ -17,16 +17,16 @@ public class OksmsPlugin extends Plugin {
 
     @Override
     public void start() {
-    	 System.out.println("AuthcPluginImpl1.start()");
+    	 System.out.println("OksmsPlugin.start()");
          // for testing the development mode
          if (RuntimeMode.DEVELOPMENT.equals(wrapper.getRuntimeMode())) {
-         	System.out.println(StringUtils.upperCase("AuthcPluginImpl1"));
+         	System.out.println(StringUtils.upperCase("OksmsPlugin"));
          }
     }
     
     @Override
     public void stop() {
-    	System.out.println("AuthcPluginImpl1.stop()");
+    	System.out.println("OksmsPlugin.stop()");
     }
    
 }

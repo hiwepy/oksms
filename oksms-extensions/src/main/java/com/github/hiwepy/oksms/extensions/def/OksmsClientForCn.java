@@ -8,22 +8,28 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
+import com.github.hiwepy.oksms.core.OksmsPayload;
 import com.github.hiwepy.oksms.core.annotation.OksmsExtension;
+import com.github.hiwepy.oksms.core.exception.PluginInvokeException;
+import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
 
 /**
  * 企业短信通 JAVA HTTP接口 发送短信
  */
 @OksmsExtension(name = "cnsms", method = "GET", protocol = "http")
-public class CnSmsClient extends OksmsClientPoint {
+public class OksmsClientForCn extends OksmsClientPoint {
 	
 	/**
 	 * SMS服务商调用地址
 	 */ 
 	protected String DEFAULT_SMSURL = "http://api.cnsms.cn/?ac=send";
 	
-	@Override
-	public String name() {
-		return "cnsms";
+	public OksmsClientForCn(){
+		super();
+	}
+	
+	public OksmsClientForCn(SmsPropertiesProvider propsProvider){
+		super(propsProvider);
 	}
 	
 	@Override
@@ -55,14 +61,14 @@ public class CnSmsClient extends OksmsClientPoint {
 	 *	120 系统升级
 	 */
 	@Override
-	public boolean send(String content, String mobile) {
+	public Object send(OksmsPayload payload) throws PluginInvokeException {
 		try {
 			Map<String, String> params = new HashMap<String, String>();
 			MessageDigest dist = MessageDigest.getInstance("MD5");
 			params.put("uid", getUid());
 			params.put("pwd", new String( dist.digest(getPwd().getBytes())) );
-			params.put("mobile", mobile);
-			params.put("content", URLEncoder.encode(content, "UTF-8"));
+			params.put("mobile", payload.getMobile());
+			params.put("content", URLEncoder.encode(payload.getContent(), "UTF-8"));
 			String result = requestGet(getUrl(), params);
 			if (result != null) {
 				JSONObject jsonObject = JSONObject.parseObject(result);
