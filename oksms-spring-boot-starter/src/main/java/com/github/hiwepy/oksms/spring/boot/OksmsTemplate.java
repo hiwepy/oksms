@@ -32,6 +32,8 @@ import com.github.hiwepy.oksms.core.annotation.OksmsExtension;
 import com.github.hiwepy.oksms.core.annotation.Primary;
 import com.github.hiwepy.oksms.core.exception.PluginInvokeException;
 
+import okhttp3.OkHttpClient;
+
 /**
  * TODO
  * @author 		： <a href="https://github.com/hiwepy">wandl</a>
@@ -42,8 +44,10 @@ public class OksmsTemplate implements InitializingBean, DisposableBean {
 	private PluginManager pluginManager;
 	private Map<String, OksmsClientPoint> clientMap = new ConcurrentHashMap<>();
 	private OksmsClientPoint defaultClient;
+	private OkHttpClient okHttpClient;
 	
-	public OksmsTemplate(PluginManager pluginManager, OksmsProperties oksmsProperties) {
+	public OksmsTemplate(OkHttpClient okHttpClient, PluginManager pluginManager, OksmsProperties oksmsProperties) {
+		this.okHttpClient = okHttpClient;
 		this.pluginManager = pluginManager;
 		this.oksmsProperties = oksmsProperties;
 	}
@@ -56,7 +60,7 @@ public class OksmsTemplate implements InitializingBean, DisposableBean {
 		return clientMap.get(name);
 	}
 	
-	public Object send(String name, OksmsPayload payload) throws PluginInvokeException {
+	public void send(String name, OksmsPayload payload) throws PluginInvokeException {
 		
 		OksmsClientPoint client = getClient(name);
 		
@@ -66,7 +70,10 @@ public class OksmsTemplate implements InitializingBean, DisposableBean {
 		properties.setProperty(OksmsClient.HTTP_CHARSET, oksmsProperties.getCharset());
 		client.initialize(properties);
 		
-		return client.send(payload);
+		client.send(payload, (data) -> {
+			
+			return true;
+		});
 	}
 
 	@Override
@@ -87,7 +94,9 @@ public class OksmsTemplate implements InitializingBean, DisposableBean {
 			System.out.println(pluginWrapper.getPluginId());
 			List<OksmsClientPoint> extensions = pluginManager.getExtensions(OksmsClientPoint.class, pluginWrapper.getPluginId());
 			for (OksmsClientPoint client : extensions) {
-		    	
+				
+				client.setOkHttpClient(okHttpClient);
+				
 		    	OksmsExtension m = client.getClass().getAnnotation(OksmsExtension.class);
 		    	clientMap.put(m.name(), client);
 		    	

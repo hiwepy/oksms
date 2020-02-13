@@ -343,6 +343,7 @@
 		<commons-lang3.version>3.9</commons-lang3.version>
 		<commons-text.version>1.6</commons-text.version>
 		<fastjson.version>1.2.58</fastjson.version>
+		<okhttp.version>3.14.4</okhttp.version>
 		<junit.version>4.12</junit.version>
 		<java.version>1.8</java.version>
 		<maven.version>3.6.3</maven.version>
@@ -425,6 +426,55 @@
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
 				<version>${fastjson.version}</version>
+			</dependency>
+			
+			<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+			<dependency>
+			    <groupId>com.squareup.okhttp3</groupId>
+			    <artifactId>okhttp</artifactId>
+			    <version>${okhttp.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor -->
+			<dependency>
+			    <groupId>com.squareup.okhttp3</groupId>
+			    <artifactId>logging-interceptor</artifactId>
+			    <version>${okhttp.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okcurl -->
+			<dependency>
+			    <groupId>com.squareup.okhttp3</groupId>
+			    <artifactId>okcurl</artifactId>
+			    <version>${okhttp.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-urlconnection -->
+			<dependency>
+			    <groupId>com.squareup.okhttp3</groupId>
+			    <artifactId>okhttp-urlconnection</artifactId>
+			    <version>${okhttp.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-tls -->
+			<dependency>
+			    <groupId>com.squareup.okhttp3</groupId>
+			    <artifactId>okhttp-tls</artifactId>
+			    <version>${okhttp.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-dnsoverhttps -->
+			<dependency>
+			    <groupId>com.squareup.okhttp3</groupId>
+			    <artifactId>okhttp-dnsoverhttps</artifactId>
+			    <version>${okhttp.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-apache -->
+			<dependency>
+			    <groupId>com.squareup.okhttp3</groupId>
+			    <artifactId>okhttp-apache</artifactId>
+			    <version>${okhttp.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-sse -->
+			<dependency>
+			    <groupId>com.squareup.okhttp3</groupId>
+			    <artifactId>okhttp-sse</artifactId>
+			    <version>${okhttp.version}</version>
 			</dependency>
 			
 			<!-- https://mvnrepository.com/artifact/org.pf4j/pf4j -->

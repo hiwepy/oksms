@@ -1,10 +1,12 @@
 package com.github.hiwepy.oksms.extensions.def;
 
-import java.net.HttpURLConnection;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Function;
 
 import org.pf4j.Extension;
 
@@ -12,8 +14,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
 import com.github.hiwepy.oksms.core.OksmsPayload;
 import com.github.hiwepy.oksms.core.annotation.OksmsExtension;
-import com.github.hiwepy.oksms.core.exception.PluginInvokeException;
-import com.github.hiwepy.oksms.core.provider.SmsPropertiesProvider;
+import com.github.hiwepy.oksms.core.exception.OksmsException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * 企业短信通 JAVA HTTP接口 发送短信
@@ -29,16 +35,6 @@ public class OksmsClientForCn extends OksmsClientPoint {
 	
 	public OksmsClientForCn(){
 		super();
-	}
-	
-	public OksmsClientForCn(SmsPropertiesProvider propsProvider){
-		super(propsProvider);
-	}
-	
-	@Override
-	protected void onPreHandle(HttpURLConnection conn) throws Exception {
-		super.onPreHandle(conn);
-		conn.setRequestMethod("GET");
 	}
 	
 	/**
@@ -64,29 +60,52 @@ public class OksmsClientForCn extends OksmsClientPoint {
 	 *	120 系统升级
 	 */
 	@Override
-	public Object send(OksmsPayload payload) throws PluginInvokeException {
+	public void send(OksmsPayload payload, final Function<String, Boolean> callback) throws OksmsException {
 		try {
+			
 			Map<String, String> params = new HashMap<String, String>();
+			
 			MessageDigest dist = MessageDigest.getInstance("MD5");
+			
 			params.put("uid", getUid());
 			params.put("pwd", new String( dist.digest(getPwd().getBytes())) );
 			params.put("mobile", payload.getMobile());
 			params.put("content", URLEncoder.encode(payload.getContent(), "UTF-8"));
-			String result = requestGet(getUrl(), params);
-			if (result != null) {
-				JSONObject jsonObject = JSONObject.parseObject(result);
-				if("Success".equalsIgnoreCase(jsonObject.getString("returnstatus"))){
-					return true;
-				}else {
-					return false;
-				}
-			} else {
-				return false;
+			
+			// 1.创建Request对象，设置一个url地址,设置请求方式。
+			Request.Builder builder = new Request.Builder()
+					.url(this.getGetHttpURL(this.getUrl(), params))
+		            .get();
+			for (Entry<String, String> entry : payload.getHeader().entrySet()) {
+				builder.addHeader(entry.getKey(), entry.getValue());
 			}
+			// 2.创建一个call对象,参数就是Request请求对象
+		    Call call = okHttpClient.newCall(builder.build());
+		    // 3.请求加入调度，重写回调方法
+	        call.enqueue(new Callback() {
+	            // 请求失败执行的方法
+	            @Override
+	            public void onFailure(Call call, IOException e) {
+	            	throw new OksmsException(e);
+	            }
+	            // 请求成功执行的方法
+	            @Override
+	            public void onResponse(Call call, Response response) throws IOException {
+	            	if(response.isSuccessful()) {
+	            		String data = response.body().string();
+		                if (data != null) {
+		                	callback.apply(data);
+		                	JSONObject jsonObject = JSONObject.parseObject(data);
+		    				if("Success".equalsIgnoreCase(jsonObject.getString("returnstatus"))){
+		    					
+		    				}
+		                }
+	            	}
+	            }
+	        });
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new OksmsException(e);
 		}
-		return false;
 	}
 	
 	@Override

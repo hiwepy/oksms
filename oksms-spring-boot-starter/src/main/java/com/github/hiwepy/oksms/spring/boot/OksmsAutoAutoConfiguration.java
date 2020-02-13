@@ -18,6 +18,7 @@ package com.github.hiwepy.oksms.spring.boot;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
 import org.pf4j.RuntimeMode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,8 +28,10 @@ import org.springframework.context.annotation.Configuration;
 
 import com.github.hiwepy.oksms.core.OksmsClientPoint;
 
+import okhttp3.OkHttpClient;
+
 @Configuration
-@ConditionalOnClass({ PluginManager.class, OksmsClientPoint.class })
+@ConditionalOnClass({ OkHttpClient.class, PluginManager.class, OksmsClientPoint.class })
 @ConditionalOnProperty(prefix = OksmsProperties.PREFIX, value = "enabled", havingValue = "true")
 @EnableConfigurationProperties({ OksmsProperties.class })
 public class OksmsAutoAutoConfiguration {
@@ -36,6 +39,7 @@ public class OksmsAutoAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public PluginManager pluginManager() {
+		
 		System.setProperty("pf4j.mode", RuntimeMode.DEPLOYMENT.toString());
 		System.setProperty("pf4j.pluginsDir", "plugins");
 		/**
@@ -50,8 +54,8 @@ public class OksmsAutoAutoConfiguration {
 	}
 	
 	@Bean
-	public OksmsTemplate oksmsTemplate(PluginManager pluginManager, OksmsProperties oksmsProperties) {
-		return new OksmsTemplate(pluginManager, oksmsProperties);
+	public OksmsTemplate oksmsTemplate(@Autowired(required = false) OkHttpClient okHttpClient, PluginManager pluginManager, OksmsProperties oksmsProperties) {
+		return new OksmsTemplate(okHttpClient, pluginManager, oksmsProperties);
 	}
 	
 }
