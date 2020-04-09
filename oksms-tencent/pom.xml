@@ -1,20 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.github.hiwepy</groupId>
 		<artifactId>oksms</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>oksms-extensions</artifactId>
-	<description>基于核心API实现的默认扩展</description>
+	<artifactId>oksms-tencent</artifactId>
 	
 	<properties>
 
+		<tencentcloud.version>3.1.31</tencentcloud.version>
 		<plugin.id>${project.artifactId}</plugin.id>
-		<plugin.description>短信发送插件默认实现</plugin.description>
-		<plugin.class>com.github.hiwepy.oksms.extensions.OksmsPlugin</plugin.class>
+		<plugin.description>腾讯云短信发送插件实现</plugin.description>
+		<plugin.class>com.github.hiwepy.oksms.extensions.OksmsTencentPlugin</plugin.class>
 		<plugin.version>${project.version}</plugin.version>
 		<plugin.provider>${project.groupId}</plugin.provider>
 		<plugin.dependencies />
@@ -53,12 +53,7 @@
 		<dependency>
 		    <groupId>com.tencentcloudapi</groupId>
 		    <artifactId>tencentcloud-sdk-java</artifactId>
-		    <version>3.1.31</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.aliyun</groupId>
-		    <artifactId>aliyun-java-sdk-core</artifactId>
-		    <version>4.1.0</version>
+		    <version>${tencentcloud.version}</version>
 		</dependency>
 		
 	</dependencies>
